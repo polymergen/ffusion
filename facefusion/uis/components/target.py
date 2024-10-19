@@ -8,6 +8,7 @@ from facefusion.filesystem import get_file_size, is_image, is_video
 from facefusion.uis.core import register_ui_component
 from facefusion.uis.typing import ComponentOptions, File
 from facefusion.vision import get_video_frame, normalize_frame_color
+import os
 
 FILE_SIZE_LIMIT = 512 * 1024 * 1024
 
@@ -71,6 +72,7 @@ def update(file : File) -> Tuple[gradio.Image, gradio.Video]:
 		state_manager.set_item('target_path', file.name)
 		return gradio.Image(value = file.name, visible = True), gradio.Video(value = None, visible = False)
 	if file and is_video(file.name):
+		file.name = os.path.splitext(file.name)[0] + '.mp4'
 		state_manager.set_item('target_path', file.name)
 		if get_file_size(file.name) > FILE_SIZE_LIMIT:
 			preview_vision_frame = normalize_frame_color(get_video_frame(file.name))
